@@ -40,38 +40,46 @@ struct NetflixHomeView: View {
     }
     
     private func getData() async {
-        guard productRows.isEmpty else { return }
-        
-        do {
-            currentUser = try await DatabaseHelper().getUsers().first
-            let products = try await DatabaseHelper().getProducts()
-            heroProduct = products.first
+            guard productRows.isEmpty else { return }
             
-            var rows: [ProductRow] = []
-            let allBrands = Set(products.map({ $0.brand }))
-            for brand in allBrands {
-                let brandProducts = products.filter({ $0.brand == brand })
-                rows.append(ProductRow(title: brand.capitalized, products: brandProducts.shuffled()))
+            do {
+                currentUser = try await DatabaseHelper().getUsers().first
+                let products = try await DatabaseHelper().getProducts()
+                heroProduct = products.first
+                
+                var rows: [ProductRow] = []
+                
+                let allCategories = Set(products.map({ $0.category }))
+                for category in allCategories {
+                    let categoryProducts = products.filter({ $0.category == category })
+                    rows.append(ProductRow(title: category.capitalized, product: categoryProducts.shuffled()))
+                }
+                productRows = rows
+            } catch {
+                print("DEBUG: Veri çekme hatası: \(error)")
             }
-            productRows = rows
-        } catch {
-            
         }
-    }
     
     private var backgroundGradientLayer: some View {
-        ZStack {
-            LinearGradient(colors: [.netflixDarkGray.opacity(1), .netflixDarkGray.opacity(0)], startPoint: .top, endPoint: .bottom)
+            ZStack {
+                LinearGradient(
+                    colors: [Color.netflixDarkGray, Color.netflixDarkGray.opacity(0)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
                 .ignoresSafeArea()
-            
-            LinearGradient(colors: [.netflixDarkRed.opacity(0.5), .netflixDarkRed.opacity(0)], startPoint: .top, endPoint: .bottom)
+                
+                LinearGradient(
+                    colors: [Color.netflixDarkRed1.opacity(0.5), Color.netflixDarkRed1.opacity(0)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
                 .ignoresSafeArea()
+            }
+            .frame(maxHeight: max(10, (400 + (scrollViewOffset * 0.75))))
+            .opacity(scrollViewOffset < -250 ? 0 : 1)
+            .animation(.easeInOut, value: scrollViewOffset)
         }
-        .frame(maxHeight: max(10, (400 + (scrollViewOffset * 0.75))))
-        .opacity(scrollViewOffset < -250 ? 0 : 1)
-        .animation(.easeInOut, value: scrollViewOffset)
-    }
-    
     private var fullHeaderWithFilter: some View {
         VStack(spacing: 0) {
             header
@@ -84,7 +92,7 @@ struct NetflixHomeView: View {
                     onFilterPressed: {
                         
                     },
-                    onXMarkPressed: {
+                    onMarkPressed: {
                         selectedFilter = nil
                     }
                 )
@@ -197,12 +205,13 @@ struct NetflixHomeView: View {
                         .padding(.horizontal, 16)
                     
                     ScrollView(.horizontal) {
-                        LazyHStack {
-                            ForEach(Array(row.products.enumerated()), id: \.offset) { (index, product) in
+                        LazyHStack(spacing: 12) {
+                            // DÜZELTME: row.products yerine modelindeki doğru alan adı olan row.product kullanıldı
+                            ForEach(Array(row.product.enumerated()), id: \.offset) { (index, product) in
                                 NetflixMovieCell(
                                     imageName: product.firstImage,
                                     title: product.title,
-                                    isRecentlyAdded: product.recentlyAdded,
+                                    isRecentlyAdded: product.isRecentlyAdded,
                                     topTenRanking: rowIndex == 1 ? (index + 1) : nil
                                 )
                                 .onTapGesture {
@@ -211,7 +220,6 @@ struct NetflixHomeView: View {
                             }
                         }
                         .padding(.horizontal, 16)
-
                     }
                     .scrollIndicators(.hidden)
                 }

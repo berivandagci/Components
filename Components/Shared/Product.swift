@@ -157,5 +157,5 @@ struct Review: Codable {
 struct ProductRow: Identifiable {
     let id = UUID().uuidString
     let title: String
-    let product: [Product]
+    let product: [Product] 
 }
