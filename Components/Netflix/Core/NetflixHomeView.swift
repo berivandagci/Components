@@ -21,78 +21,86 @@ struct NetflixHomeView: View {
         ZStack(alignment: .top) {
             Color.netflixBlack.ignoresSafeArea()
             
-            ScrollView(.vertical) {
-                VStack(spacing: 8) {
-           
-                    Rectangle()
-                        .opacity(0)
-                        .frame(height: fullHeaderSize.height)
-                    
-                    if let heroProduct {
-                        NetflixHeroCell(
-                            imageName: heroProduct.firstImage,
-                            isNetflixFilm: true,
-                            title: heroProduct.title,
-                            categories: [heroProduct.category.capitalized, heroProduct.brand].compactMap({ $0 }),
-                            onBackgroundPressed: {
-                               
-                            },
-                            onPlayPressed: {
-                              
-                            },
-                            onMyListPressed: {
-                            
-                            }
-                        )
-                        .padding(.horizontal, 8)
-                    }
-                    
-                    ForEach(productRows, id: \.self) { row in
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(row.title)
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                                .padding(.horizontal, 24)
-                            
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 12) {
-                                    ForEach(row.products) { product in
-                                        Text(product.title)
-                                            .frame(width: 120, height: 160)
-                                            .background(Color.gray.opacity(0.3))
-                                            .cornerRadius(8)
-                                    }
-                                }
-                                .padding(.horizontal, 24)
-                            }
-                        }
-                        .padding(.bottom, 24)
-                    }
-                }
-            }
-            .scrollIndicators(.hidden)
-            
-            VStack(spacing: 8) {
-                header
-                NetflixFilterBarView(
-                    selectedFilter: $selectedFilter,
-                    onFilterPressed: {
-                     
-                    },
-                    onMarkPressed: {
-                        selectedFilter = nil
-                    }
-                )
-                .padding(.horizontal, 16)
-            }
-            .background(Color.blue.opacity(0))
-            .readingFrame { frame in
-                fullHeaderSize = frame.size
-            }
+            mainScrollView
+            headerGroup
         }
         .foregroundStyle(.netflixWhite)
         .task {
             await getData()
+        }
+    }
+    
+    private var mainScrollView: some View {
+        ScrollView(.vertical) {
+            VStack(spacing: 8) {
+                Rectangle()
+                    .opacity(0)
+                    .frame(height: fullHeaderSize.height)
+                
+                heroCellSection
+                productRowsSection
+            }
+        }
+        .scrollIndicators(.hidden)
+    }
+    
+    @ViewBuilder
+    private var heroCellSection: some View {
+        if let heroProduct {
+            NetflixHeroCell(
+                imageName: heroProduct.firstImage,
+                isNetflixFilm: true,
+                title: heroProduct.title,
+                categories: heroCategories(product: heroProduct),
+                onBackgroundPressed: {},
+                onPlayPressed: {},
+                onMyListPressed: {}
+            )
+            .padding(.horizontal, 8)
+        }
+    }
+    
+    private var productRowsSection: some View {
+        // ProductRow Identifiable olduğu için id belirtmeye gerek yoktur
+        ForEach(productRows) { row in
+            VStack(alignment: .leading, spacing: 6) {
+                Text(row.title)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .padding(.horizontal, 24)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 12) {
+                        // Modeldeki değişken adı 'product' (tekil) olduğu için row.product kullanıldı
+                        ForEach(row.product) { product in
+                            Text(product.title)
+                                .frame(width: 120, height: 160)
+                                .background(Color.gray.opacity(0.3))
+                                .cornerRadius(8)
+                        }
+                    }
+                    .padding(.horizontal, 24)
+                }
+            }
+            .padding(.bottom, 24)
+        }
+    }
+    
+    private var headerGroup: some View {
+        VStack(spacing: 8) {
+            header
+            NetflixFilterBarView(
+                selectedFilter: $selectedFilter,
+                onFilterPressed: {},
+                onMarkPressed: {
+                    selectedFilter = nil
+                }
+            )
+            .padding(.horizontal, 16)
+        }
+        .background(Color.blue.opacity(0))
+        .readingFrame { frame in
+            fullHeaderSize = frame.size
         }
     }
     
@@ -103,21 +111,23 @@ struct NetflixHomeView: View {
                 .font(.title)
             
             HStack(spacing: 16) {
-                Image(systemName: "tv.badge.wifi")
-                    .onTapGesture {
-                        
-                    }
-                
-                Image(systemName: "magnifyingglass")
-                    .onTapGesture {
-                        
-                    }
+                Image(systemName: "tv.badge.wifi").onTapGesture {}
+                Image(systemName: "magnifyingglass").onTapGesture {}
             }
             .font(.title)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
         .background(Color.netflixBlack.opacity(0.8))
+    }
+    
+    private func heroCategories(product: Product) -> [String] {
+        var categories: [String] = []
+        categories.append(product.category.capitalized)
+        if let brand = product.brand {
+            categories.append(brand)
+        }
+        return categories
     }
     
     private func getData() async {
@@ -129,12 +139,11 @@ struct NetflixHomeView: View {
             heroProduct = products.first
             
             var newRows: [ProductRow] = []
-            let allBrands = Set(products.map({ $0.brand }))
+            let allBrands = Set(products.compactMap({ $0.brand }))
             for brand in allBrands {
-                guard let brand = brand else { continue }
                 let brandProducts = products.filter({ $0.brand == brand })
-            
-                newRows.append(ProductRow(title: brand.capitalized, products: brandProducts))
+                // ProductRow içerisindeki parametre adı 'product' olarak verildi
+                newRows.append(ProductRow(title: brand.capitalized, product: brandProducts))
             }
             productRows = newRows
         } catch {
