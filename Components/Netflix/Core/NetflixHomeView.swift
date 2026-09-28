@@ -4,52 +4,145 @@
 //
 //  Created by beri on 24.09.2026.
 //
-
 import SwiftUI
 import SwiftfulUI
+import SwiftfulRouting
 
 struct NetflixHomeView: View {
+    
+    @Environment(\.router) var router
+    
     @State private var filters = FilterModel.mockArray
     @State private var selectedFilter: FilterModel? = nil
     @State private var fullHeaderSize: CGSize = .zero
-    @State private var heroProduct: Product? = nil
-    @State private var products: [Product] = []
-    @State private var productRows: [ProductRow] = []
-    @State private var currentUser: User? = nil
-    @State private var scrollOffset: CGFloat = 0
+    @State private var scrollViewOffset: CGFloat = 0
     
+    @State private var heroProduct: Product? = nil
+    @State private var currentUser: User? = nil
+    @State private var productRows: [ProductRow] = []
+
     var body: some View {
         ZStack(alignment: .top) {
             Color.netflixBlack.ignoresSafeArea()
             
-            mainScrollView
-            headerGroup
+            backgroundGradientLayer
+            
+            scrollViewLayer
+            
+            fullHeaderWithFilter
+
         }
         .foregroundStyle(.netflixWhite)
         .task {
             await getData()
         }
+        .toolbar(.hidden, for: .navigationBar)
     }
     
-    private var mainScrollView: some View {
-        ScrollViewWithOnScrollChanged(
-            axes: .vertical,
-            showsIndicators: false,
-            onScrollChanged: { offset in
-                scrollOffset = offset
+    private func getData() async {
+        guard productRows.isEmpty else { return }
+        
+        do {
+            currentUser = try await DatabaseHelper().getUsers().first
+            let products = try await DatabaseHelper().getProducts()
+            heroProduct = products.first
+            
+            var rows: [ProductRow] = []
+            let allBrands = Set(products.map({ $0.brand }))
+            for brand in allBrands {
+                let brandProducts = products.filter({ $0.brand == brand })
+                rows.append(ProductRow(title: brand.capitalized, products: brandProducts.shuffled()))
             }
-        ) {
-            VStack(spacing: 8) {
-                Rectangle()
-                    .opacity(0)
-                    .frame(height: fullHeaderSize.height)
-                
-                if let heroProduct {
-                    heroCell(product: heroProduct)
+            productRows = rows
+        } catch {
+            
+        }
+    }
+    
+    private var backgroundGradientLayer: some View {
+        ZStack {
+            LinearGradient(colors: [.netflixDarkGray.opacity(1), .netflixDarkGray.opacity(0)], startPoint: .top, endPoint: .bottom)
+                .ignoresSafeArea()
+            
+            LinearGradient(colors: [.netflixDarkRed.opacity(0.5), .netflixDarkRed.opacity(0)], startPoint: .top, endPoint: .bottom)
+                .ignoresSafeArea()
+        }
+        .frame(maxHeight: max(10, (400 + (scrollViewOffset * 0.75))))
+        .opacity(scrollViewOffset < -250 ? 0 : 1)
+        .animation(.easeInOut, value: scrollViewOffset)
+    }
+    
+    private var fullHeaderWithFilter: some View {
+        VStack(spacing: 0) {
+            header
+                .padding(.horizontal, 16)
+            
+            if scrollViewOffset > -20 {
+                NetflixFilterBarView(
+                    selectedFilter: $selectedFilter,
+                    filters: filters,
+                    onFilterPressed: {
+                        
+                    },
+                    onXMarkPressed: {
+                        selectedFilter = nil
+                    }
+                )
+                .padding(.top, 16)
+                .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .padding(.bottom, 8)
+        .background(
+            ZStack {
+                if scrollViewOffset < -70 {
+                    Rectangle()
+                        .fill(Color.clear)
+                        .background(.ultraThinMaterial)
+                        .brightness(-0.2)
+                        .ignoresSafeArea()
                 }
-                
-                categoryRows
             }
+        )
+        .animation(.smooth, value: scrollViewOffset)
+        .readingFrame { frame in
+            if fullHeaderSize == .zero {
+                fullHeaderSize = frame.size
+            }
+        }
+    }
+    
+    private func onProductPressed(product: Product) {
+        router.showScreen(.sheet) { _ in
+            Text(product.title)
+                .font(.title)
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.netflixBlack)
+        }
+    }
+    
+    private var header: some View {
+        HStack(spacing: 0) {
+            Text("For You")
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .font(.title)
+                .onTapGesture {
+                    router.dismissScreen()
+                }
+            
+            HStack(spacing: 16) {
+                Image(systemName: "tv.badge.wifi")
+                    .onTapGesture {
+                        
+                    }
+                
+                Image(systemName: "magnifyingglass")
+                    .onTapGesture {
+                        
+                    }
+            }
+            .font(.title2)
         }
     }
     
@@ -58,12 +151,41 @@ struct NetflixHomeView: View {
             imageName: product.firstImage,
             isNetflixFilm: true,
             title: product.title,
-            categories: heroCategories(product: product),
-            onBackgroundPressed: {},
-            onPlayPressed: {},
-            onMyListPressed: {}
+            categories: [product.category.capitalized, product.brand ?? ""],
+            onBackgroundPressed: {
+                onProductPressed(product: product)
+            },
+            onPlayPressed: {
+                onProductPressed(product: product)
+            },
+            onMyListPressed: {
+                
+            }
         )
-        .padding(.horizontal, 8)
+        .padding(24)
+    }
+    
+    private var scrollViewLayer: some View {
+        ScrollViewWithOnScrollChanged(
+            .vertical,
+            showsIndicators: false,
+            content: {
+                VStack(spacing: 8) {
+                    Rectangle()
+                        .opacity(0)
+                        .frame(height: fullHeaderSize.height)
+                    
+                    if let heroProduct {
+                        heroCell(product: heroProduct)
+                    }
+                    
+                    categoryRows
+                }
+            },
+            onScrollChanged: { offset in
+                scrollViewOffset = min(0, offset.y)
+            }
+        )
     }
     
     private var categoryRows: some View {
@@ -74,93 +196,32 @@ struct NetflixHomeView: View {
                         .font(.headline)
                         .padding(.horizontal, 16)
                     
-                    ScrollView(.horizontal, showsIndicators: false) {
+                    ScrollView(.horizontal) {
                         LazyHStack {
-                            ForEach(Array(row.product.enumerated()), id: \.offset) { (index, product) in
+                            ForEach(Array(row.products.enumerated()), id: \.offset) { (index, product) in
                                 NetflixMovieCell(
                                     imageName: product.firstImage,
                                     title: product.title,
-                                    isRecentlyAdded: product.isRecentlyAdded,
+                                    isRecentlyAdded: product.recentlyAdded,
                                     topTenRanking: rowIndex == 1 ? (index + 1) : nil
                                 )
+                                .onTapGesture {
+                                    onProductPressed(product: product)
+                                }
                             }
                         }
                         .padding(.horizontal, 16)
+
                     }
+                    .scrollIndicators(.hidden)
                 }
             }
-        }
-    }
-    
-    private var headerGroup: some View {
-        VStack(spacing: 8) {
-            header
-            
-            NetflixFilterBarView(
-                filters: filters,
-                selectedFilter: $selectedFilter,
-                onFilterPressed: { newFilter in
-                    selectedFilter = newFilter
-                },
-                onMarkPressed: {
-                    selectedFilter = nil
-                }
-            )
-            .padding(.horizontal, 16)
-        }
-        .background(Color.blue.opacity(0))
-        .readingFrame { frame in
-            fullHeaderSize = frame.size
-        }
-    }
-    
-    private var header: some View {
-        HStack(spacing: 8) {
-            Text("For You")
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .font(.title)
-            
-            HStack(spacing: 16) {
-                Image(systemName: "tv.badge.wifi").onTapGesture {}
-                Image(systemName: "magnifyingglass").onTapGesture {}
-            }
-            .font(.title)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-        .background(Color.netflixBlack.opacity(0.8))
-    }
-    
-    private func heroCategories(product: Product) -> [String] {
-        var categories: [String] = []
-        categories.append(product.category.capitalized)
-        if let brand = product.brand {
-            categories.append(brand)
-        }
-        return categories
-    }
-    
-    private func getData() async {
-        guard productRows.isEmpty else { return }
-        
-        do {
-            currentUser = try? await DatabaseHelper().getUsers().first
-            products = try await Array(DatabaseHelper().getProducts().prefix(8))
-            heroProduct = products.first
-            
-            var newRows: [ProductRow] = []
-            let allBrands = Set(products.compactMap({ $0.brand }))
-            for brand in allBrands {
-                let brandProducts = products.filter({ $0.brand == brand })
-                newRows.append(ProductRow(title: brand.capitalized, product: brandProducts))
-            }
-            productRows = newRows
-        } catch {
-            print("Error getting data: \(error)")
         }
     }
 }
 
 #Preview {
-    NetflixHomeView()
+    RouterView { _ in
+        NetflixHomeView()
+    }
 }
