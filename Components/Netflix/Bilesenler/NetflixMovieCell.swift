@@ -15,7 +15,7 @@ struct NetflixMovieCell: View {
     var topTenRanking: Int? = nil
     
     var body: some View {
-        HStack(alignment: .bottom) {
+        HStack(alignment: .bottom, spacing: 0) {
             if let topTenRanking {
                 Text("\(topTenRanking)")
                     .font(.system(size: 100, weight: .bold))

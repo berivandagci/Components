@@ -26,7 +26,7 @@ struct Product: Codable, Identifiable {
     let id: Int
     let title: String
     let description: String
-    let category: String // String yapıldı
+    let category: String
     let price: Double
     let discountPercentage: Double
     let rating: Double
@@ -38,9 +38,9 @@ struct Product: Codable, Identifiable {
     let dimensions: Dimensions
     let warrantyInformation: String
     let shippingInformation: String
-    let availabilityStatus: String // String yapıldı
+    let availabilityStatus: String
     let reviews: [Review]
-    let returnPolicy: String // String yapıldı
+    let returnPolicy: String
     let minimumOrderQuantity: Double
     let meta: Meta
     let images: [String]
@@ -48,6 +48,11 @@ struct Product: Codable, Identifiable {
     
     var firstImage: String {
         images.first ?? Constants.randomImage
+    }
+    
+    // Netflix klonundaki hücreler için rastgele recentlyAdded desteği
+    var isRecentlyAdded: Bool {
+        Bool.random()
     }
     
     enum CodingKeys: String, CodingKey {

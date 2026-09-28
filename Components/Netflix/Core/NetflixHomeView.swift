@@ -58,10 +58,31 @@ struct NetflixHomeView: View {
             )
             .padding(.horizontal, 8)
         }
+        LazyVStack  (spacing: 16) {
+            ForEach(productRows) { row in
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(row.title)
+                        .font(.headline)
+                    ScrollView(.horizontal) {
+                        LazyHStack {
+                            ForEach(row.products) { product in
+                                NetflixMovieCell()
+                            }
+                        }
+                    }
+                    .scrollIndicators(.hidden)
+                }
+                
+            }
+        }
+        ForEach(0..<20) { _ in
+            Rectangle()
+                .fill(Color.red)
+                .frame(height: 200)
+        }
     }
     
     private var productRowsSection: some View {
-        // ProductRow Identifiable olduğu için id belirtmeye gerek yoktur
         ForEach(productRows) { row in
             VStack(alignment: .leading, spacing: 6) {
                 Text(row.title)
@@ -71,12 +92,15 @@ struct NetflixHomeView: View {
                 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
-                        // Modeldeki değişken adı 'product' (tekil) olduğu için row.product kullanıldı
                         ForEach(row.product) { product in
-                            Text(product.title)
-                                .frame(width: 120, height: 160)
-                                .background(Color.gray.opacity(0.3))
-                                .cornerRadius(8)
+                            NetflixMovieCell(
+                                width: 120,
+                                height: 160,
+                                imageName: product.firstImage,
+                                title: product.title,
+                                isRecentlyAdded: false,
+                                topTenRanking: nil
+                            )
                         }
                     }
                     .padding(.horizontal, 24)
@@ -142,7 +166,6 @@ struct NetflixHomeView: View {
             let allBrands = Set(products.compactMap({ $0.brand }))
             for brand in allBrands {
                 let brandProducts = products.filter({ $0.brand == brand })
-                // ProductRow içerisindeki parametre adı 'product' olarak verildi
                 newRows.append(ProductRow(title: brand.capitalized, product: brandProducts))
             }
             productRows = newRows
