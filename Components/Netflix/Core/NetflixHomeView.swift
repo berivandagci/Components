@@ -13,6 +13,17 @@ struct NetflixHomeView: View {
     var body: some View {
         ZStack {
             Color.netflixBlack.ignoresSafeArea()
+            ScrollView(.vertical) {
+                VStack(spacing: 0) {
+                    NetflixHeroCell()
+                    ForEach(0..<20) { _ in
+                        Rectangle()
+                            .fill(Color.red)
+                            .frame(height: 200)
+                    }
+                }
+            }
+            .scrollIndicators(.hidden)
             VStack(spacing: 8) {
                 header
                 NetflixFilterBarView(
@@ -27,6 +38,7 @@ struct NetflixHomeView: View {
                     .padding(.horizontal, 16)
                 Spacer()
             }
+            
         }
         .foregroundStyle(.netflixWhite)
     }

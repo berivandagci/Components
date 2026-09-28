@@ -25,6 +25,17 @@ struct NetflixHeroCell: View {
             // Arka plan görseli
             ImageLoaderView(urlString: imageName)
             
+            // Degrade (Gradient) Efekti
+            LinearGradient(
+                colors: [
+                    .netflixBlack.opacity(0),
+                    .netflixBlack.opacity(0.4),
+                    .netflixBlack.opacity(0.9)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            
             // İçerik Konteyneri
             VStack(spacing: 16) {
                 VStack(spacing: 0) {
@@ -68,9 +79,9 @@ struct NetflixHeroCell: View {
                     // Play Butonu
                     HStack {
                         Image(systemName: "play.fill")
-                        Text("Play") // Büyük harfe çevrildi
+                        Text("Play")
                     }
-                    .frame(maxWidth: .infinity) // Düzeltildi: minWidth yerine maxWidth
+                    .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
                     .foregroundStyle(.netflixDarkGray)
                     .background(.netflixWhite)
@@ -84,23 +95,26 @@ struct NetflixHeroCell: View {
                         Image(systemName: "plus")
                         Text("My List")
                     }
-                    .frame(maxWidth: .infinity) // Düzeltildi: minWidth yerine maxWidth
+                    .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
                     .foregroundStyle(.netflixWhite)
                     .background(.netflixDarkGray)
                     .cornerRadius(4)
                     .asButton(.press) {
-                        onMyListPressed?() // Düzeltildi: Doğru action bağlandı
+                        onMyListPressed?()
                     }
                 }
                 .font(.callout)
                 .fontWeight(.medium)
             }
-            .background(Color.blue) // Test amaçlı rengi görebilirsin
             .padding(24)
         }
-        .padding(24)
+        .foregroundStyle(.netflixWhite)
+        .cornerRadius(10)
         .aspectRatio(0.8, contentMode: .fit)
+        .asButton(.tap) { // Düzeltildi: onButton yerine asButton kullanıldı
+            onBackgroundPressed?()
+        }
     }
 }
 
