@@ -51,9 +51,10 @@ struct Product: Codable, Identifiable {
     }
     
     // Netflix klonundaki hücreler için rastgele recentlyAdded desteği
-    var isRecentlyAdded: Bool {
-        Bool.random()
-    }
+    var isRecentlyAdded: Bool = {
+        return Int.random(in: 1...4) == 1
+     
+    } ()
     
     enum CodingKeys: String, CodingKey {
         case id = "id"

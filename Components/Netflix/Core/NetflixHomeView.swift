@@ -16,6 +16,7 @@ struct NetflixHomeView: View {
     @State private var products: [Product] = []
     @State private var productRows: [ProductRow] = []
     @State private var currentUser: User? = nil
+    @State private var scrollOffset: CGFloat = 0
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -31,91 +32,76 @@ struct NetflixHomeView: View {
     }
     
     private var mainScrollView: some View {
-        ScrollView(.vertical) {
+        ScrollViewWithOnScrollChanged(
+            axes: .vertical,
+            showsIndicators: false,
+            onScrollChanged: { offset in
+                scrollOffset = offset
+            }
+        ) {
             VStack(spacing: 8) {
                 Rectangle()
                     .opacity(0)
                     .frame(height: fullHeaderSize.height)
                 
-                heroCellSection
-                productRowsSection
+                if let heroProduct {
+                    heroCell(product: heroProduct)
+                }
+                
+                categoryRows
             }
         }
-        .scrollIndicators(.hidden)
     }
     
-    @ViewBuilder
-    private var heroCellSection: some View {
-        if let heroProduct {
-            NetflixHeroCell(
-                imageName: heroProduct.firstImage,
-                isNetflixFilm: true,
-                title: heroProduct.title,
-                categories: heroCategories(product: heroProduct),
-                onBackgroundPressed: {},
-                onPlayPressed: {},
-                onMyListPressed: {}
-            )
-            .padding(.horizontal, 8)
-        }
-        LazyVStack  (spacing: 16) {
-            ForEach(productRows) { row in
+    private func heroCell(product: Product) -> some View {
+        NetflixHeroCell(
+            imageName: product.firstImage,
+            isNetflixFilm: true,
+            title: product.title,
+            categories: heroCategories(product: product),
+            onBackgroundPressed: {},
+            onPlayPressed: {},
+            onMyListPressed: {}
+        )
+        .padding(.horizontal, 8)
+    }
+    
+    private var categoryRows: some View {
+        LazyVStack(spacing: 16) {
+            ForEach(Array(productRows.enumerated()), id: \.offset) { (rowIndex, row) in
                 VStack(alignment: .leading, spacing: 6) {
                     Text(row.title)
                         .font(.headline)
-                    ScrollView(.horizontal) {
+                        .padding(.horizontal, 16)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack {
-                            ForEach(row.products) { product in
-                                NetflixMovieCell()
+                            ForEach(Array(row.product.enumerated()), id: \.offset) { (index, product) in
+                                NetflixMovieCell(
+                                    imageName: product.firstImage,
+                                    title: product.title,
+                                    isRecentlyAdded: product.isRecentlyAdded,
+                                    topTenRanking: rowIndex == 1 ? (index + 1) : nil
+                                )
                             }
                         }
+                        .padding(.horizontal, 16)
                     }
-                    .scrollIndicators(.hidden)
-                }
-                
-            }
-        }
-        ForEach(0..<20) { _ in
-            Rectangle()
-                .fill(Color.red)
-                .frame(height: 200)
-        }
-    }
-    
-    private var productRowsSection: some View {
-        ForEach(productRows) { row in
-            VStack(alignment: .leading, spacing: 6) {
-                Text(row.title)
-                    .font(.headline)
-                    .fontWeight(.semibold)
-                    .padding(.horizontal, 24)
-                
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
-                        ForEach(row.product) { product in
-                            NetflixMovieCell(
-                                width: 120,
-                                height: 160,
-                                imageName: product.firstImage,
-                                title: product.title,
-                                isRecentlyAdded: false,
-                                topTenRanking: nil
-                            )
-                        }
-                    }
-                    .padding(.horizontal, 24)
                 }
             }
-            .padding(.bottom, 24)
         }
     }
     
     private var headerGroup: some View {
         VStack(spacing: 8) {
             header
+            
             NetflixFilterBarView(
+                filters: filters,
                 selectedFilter: $selectedFilter,
-                onFilterPressed: {},
+                onFilterPressed: { newFilter in
+                    selectedFilter = newFilter
+                },
                 onMarkPressed: {
                     selectedFilter = nil
                 }
