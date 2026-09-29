@@ -9,17 +9,18 @@ import SwiftUI
 import SwiftfulUI
 
 struct NetflixDetailsProductView: View {
+    
     var title: String = "Movie Title"
     var isNew: Bool = true
-    var yearReleased: String? = "2026"
+    var yearReleased: String? = "2024"
     var seasonCount: Int? = 2
     var hasClosedCaptions: Bool = true
-    var isTopTen: Int?  = 6
-    var descriptionText : String? = "SDFSDF FSDFSDF "
-    var castText: String? = "Cast: Berivan"
+    var isTopTen: Int? = 6
+    var descriptionText: String? = "This is the description for the title that is selected and it should go multiple lines."
+    var castText: String? = "Cast: Berivan, Your Name, Someone Else"
     var onPlayPressed: (() -> Void)? = nil
     var onDownloadPressed: (() -> Void)? = nil
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
@@ -49,6 +50,7 @@ struct NetflixDetailsProductView: View {
             if let isTopTen {
                 HStack(spacing: 8) {
                     topTenIcon
+                    
                     Text("#\(isTopTen) in TV Shows Today")
                         .font(.headline)
                 }
@@ -84,45 +86,46 @@ struct NetflixDetailsProductView: View {
             .font(.callout)
             .fontWeight(.medium)
             
-            if let descriptionText {
-                Text(descriptionText)
+            Group {
+                if let descriptionText {
+                    Text(descriptionText)
+                }
+                
+                if let castText {
+                    Text(castText)
+                        .foregroundStyle(.netflixLightGray)
+                }
             }
-            
-            if let castText {
-                Text(castText)
-                    .foregroundStyle(.netflixLightGray)
-            }
+            .font(.callout)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .multilineTextAlignment(.leading)
         }
-        .font(.callout)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .multilineTextAlignment(.leading)
         .foregroundStyle(.netflixWhite)
     }
     
     private var topTenIcon: some View {
-        HStack(spacing: 8) {
-            Rectangle()
-                .fill(.netflixRed)
-                .frame(width: 28, height: 28)
-                .overlay(
-                    VStack(spacing: 0) {
-                        Text("TOP")
-                            .font(.system(size: 8))
-                        Text("10")
-                            .fontWeight(.bold)
-                            .font(.system(size: 16))
-                            .offset(y: 1)
-                    }
-                )
-        }
-        .foregroundStyle(.netflixWhite)
+        Rectangle()
+            .fill(.netflixRed)
+            .frame(width: 28, height: 28)
+            .overlay(
+                VStack(spacing: -4) {
+                    Text("TOP")
+                        .fontWeight(.bold)
+                        .font(.system(size: 8))
+                    Text("10")
+                        .fontWeight(.bold)
+                        .font(.system(size: 16))
+                }
+                .offset(y: 1)
+            )
     }
 }
 
 #Preview {
     ZStack {
         Color.black.ignoresSafeArea()
-        VStack {
+        
+        VStack(spacing: 40) {
             NetflixDetailsProductView()
             NetflixDetailsProductView(
                 isNew: false,
