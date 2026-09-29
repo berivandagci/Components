@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftfulUI
 
 struct NetflixDetailsHeaderView: View {
     var imageName: String = Constants.randomImage
@@ -14,50 +15,52 @@ struct NetflixDetailsHeaderView: View {
     var onXMarkPressed: (() -> Void)? = nil
     
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             ImageLoaderView(urlString: imageName)
             
-           
-            VStack {
-                HStack {
-                    Spacer()
-                    
-                    HStack(spacing: 16) {
-                        if let onAirplayPressed {
-                            Button(action: onAirplayPressed) {
-                                Image(systemName: "airplayvideo")
-                                    .font(.title2)
-                                    .foregroundStyle(.white)
-                            }
-                        }
-                        
-                        if let onXMarkPressed {
-                            Button(action: onXMarkPressed) {
-                                Image(systemName: "xmark.circle.fill")
-                                    .font(.title2)
-                                    .foregroundStyle(.white)
-                                    .background(Color.black.opacity(0.5))
-                                    .clipShape(Circle())
-                            }
-                        }
-                    }
-                }
-                .padding(16)
-                
-                Spacer()
-            }
-            
-            // Alt kısımdaki İlerleme Çubuğu (Progress Bar)
             CustomProgressBar(
-                selection: Binding.constant(progress),
+                selection: progress,
                 range: 0...1,
-                backgroundColor: Color.gray.opacity(0.5),
-                foregroundColor: Color.netflixRed
+                backgroundColor: .netflixLightGray,
+                foregroundColor: .netflixRed,
+                cornerRadius: 2,
+                height: 4
             )
-            .frame(height: 4)
-            .padding(.horizontal, 0)
+            .padding(.bottom, 4)
+            .animation(.linear, value: progress )
+            
+            HStack(spacing: 8) {
+                Circle()
+                    .fill(.netflixDarkGray)
+                    .overlay(
+                        Image(systemName: "tv.badge.wifi")
+                            .offset(y: 1)
+                        
+                    )
+                    .frame(width: 36, height: 36)
+                    .onTapGesture {
+                        onAirplayPressed?()
+                    }
+                Circle()
+                    .fill(.netflixDarkGray)
+                    .overlay(
+                        Image(systemName: "xmark")
+                            .offset(y: 1)
+                        
+                    )
+                    .frame(width: 36, height: 36)
+                    .onTapGesture {
+                        onXMarkPressed?()
+                    }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+            .foregroundStyle(.netflixWhite)
+            .font(.subheadline)
+            .fontWeight(.bold)
+            .padding(0)
+            
         }
-        .aspectRatio(16/9, contentMode: .fit)
+        .aspectRatio(2, contentMode: .fit)
     }
 }
 
