@@ -27,7 +27,8 @@ struct NetflixDetailsHeaderView: View {
                 height: 4
             )
             .padding(.bottom, 4)
-            .animation(.linear, value: progress )
+            .animation(.linear, value: progress)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom) // <-- Çubuğu en alta sabitledik
             
             HStack(spacing: 8) {
                 Circle()
@@ -35,7 +36,6 @@ struct NetflixDetailsHeaderView: View {
                     .overlay(
                         Image(systemName: "tv.badge.wifi")
                             .offset(y: 1)
-                        
                     )
                     .frame(width: 36, height: 36)
                     .onTapGesture {
@@ -46,7 +46,6 @@ struct NetflixDetailsHeaderView: View {
                     .overlay(
                         Image(systemName: "xmark")
                             .offset(y: 1)
-                        
                     )
                     .frame(width: 36, height: 36)
                     .onTapGesture {
@@ -57,8 +56,7 @@ struct NetflixDetailsHeaderView: View {
             .foregroundStyle(.netflixWhite)
             .font(.subheadline)
             .fontWeight(.bold)
-            .padding(0)
-            
+            .padding(8) // İkonların köşelere yapışmaması için hafif boşluk bırakmak daha şık durur
         }
         .aspectRatio(2, contentMode: .fit)
     }

@@ -206,7 +206,7 @@ struct NetflixHomeView: View {
                     
                     ScrollView(.horizontal) {
                         LazyHStack(spacing: 12) {
-                            // DÜZELTME: row.products yerine modelindeki doğru alan adı olan row.product kullanıldı
+                           
                             ForEach(Array(row.product.enumerated()), id: \.offset) { (index, product) in
                                 NetflixMovieCell(
                                     imageName: product.firstImage,
