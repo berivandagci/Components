@@ -11,7 +11,7 @@ import SwiftfulUI
 struct NetflixDetailsProductView: View {
     var title: String = "Movie Title"
     var isNew: Bool = true
-    var yearReleased: String = "2026"
+    var yearReleased: String? = "2026"
     var seasonCount: Int? = 2
     var hasClosedCaptions: Bool = true
     var isTopTen: Int?  = 6
@@ -31,10 +31,15 @@ struct NetflixDetailsProductView: View {
                     Text("New")
                         .foregroundStyle(.green)
                 }
-                Text(yearReleased)
+                
+                if let yearReleased {
+                    Text(yearReleased)
+                }
+                
                 if let seasonCount {
                     Text("\(seasonCount) Seasons")
                 }
+                
                 if hasClosedCaptions {
                     Image(systemName: "captions.bubble")
                 }
@@ -91,7 +96,7 @@ struct NetflixDetailsProductView: View {
         .font(.callout)
         .frame(maxWidth: .infinity, alignment: .leading)
         .multilineTextAlignment(.leading)
-        .foregroundStyle(.netflixWhite) // Doğru yere ve düzeltilmiş isimle taşındı
+        .foregroundStyle(.netflixWhite)
     }
     
     private var topTenIcon: some View {
@@ -118,9 +123,16 @@ struct NetflixDetailsProductView: View {
     ZStack {
         Color.black.ignoresSafeArea()
         VStack {
-        NetflixDetailsProductView()
-        NetflixDetailsProductView(isTopTen: nil)
-NetflixDetailsProductView()
-    }
+            NetflixDetailsProductView()
+            NetflixDetailsProductView(
+                isNew: false,
+                yearReleased: nil,
+                seasonCount: nil,
+                hasClosedCaptions: false,
+                isTopTen: nil,
+                descriptionText: nil,
+                castText: nil
+            )
+        }
     }
 }
