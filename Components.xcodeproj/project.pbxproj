@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C1187D0930936FE300A3829C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C1187D0830936FE300A3829C /* GoogleService-Info.plist */; };
+		C15E2FE830937684008765AA /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C15E2FE730937684008765AA /* FirebaseAuth */; };
+		C15E2FEA30937684008765AA /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C15E2FE930937684008765AA /* FirebaseFirestore */; };
 		C177EC17305B233900A33DDC /* SwiftfulRouting in Frameworks */ = {isa = PBXBuildFile; productRef = C177EC16305B233900A33DDC /* SwiftfulRouting */; };
 		C1EC92253052E27400C4FBD1 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = C1EC92243052E27400C4FBD1 /* SDWebImageSwiftUI */; };
 		C1EC92373052F62A00C4FBD1 /* SwiftfulUI in Frameworks */ = {isa = PBXBuildFile; productRef = C1EC92363052F62A00C4FBD1 /* SwiftfulUI */; };
@@ -31,6 +34,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C1187D0830936FE300A3829C /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C1EC91F93052E13B00C4FBD1 /* Components.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Components.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1EC92063052E13C00C4FBD1 /* ComponentsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ComponentsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C1EC92103052E13C00C4FBD1 /* ComponentsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ComponentsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -62,6 +66,8 @@
 				C1EC92373052F62A00C4FBD1 /* SwiftfulUI in Frameworks */,
 				C177EC17305B233900A33DDC /* SwiftfulRouting in Frameworks */,
 				C1EC92253052E27400C4FBD1 /* SDWebImageSwiftUI in Frameworks */,
+				C15E2FEA30937684008765AA /* FirebaseFirestore in Frameworks */,
+				C15E2FE830937684008765AA /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,6 +92,7 @@
 		C1EC91F03052E13B00C4FBD1 = {
 			isa = PBXGroup;
 			children = (
+				C1187D0830936FE300A3829C /* GoogleService-Info.plist */,
 				C1EC91FB3052E13B00C4FBD1 /* Components */,
 				C1EC92093052E13C00C4FBD1 /* ComponentsTests */,
 				C1EC92133052E13C00C4FBD1 /* ComponentsUITests */,
@@ -126,6 +133,8 @@
 				C1EC92243052E27400C4FBD1 /* SDWebImageSwiftUI */,
 				C1EC92363052F62A00C4FBD1 /* SwiftfulUI */,
 				C177EC16305B233900A33DDC /* SwiftfulRouting */,
+				C15E2FE730937684008765AA /* FirebaseAuth */,
+				C15E2FE930937684008765AA /* FirebaseFirestore */,
 			);
 			productName = Components;
 			productReference = C1EC91F93052E13B00C4FBD1 /* Components.app */;
@@ -214,6 +223,7 @@
 				C1EC92233052E27400C4FBD1 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				C1EC92353052F62A00C4FBD1 /* XCRemoteSwiftPackageReference "SwiftfulUI" */,
 				C177EC15305B233900A33DDC /* XCRemoteSwiftPackageReference "SwiftfulRouting" */,
+				C15E2FE630937684008765AA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C1EC91FA3052E13B00C4FBD1 /* Products */;
@@ -232,6 +242,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1187D0930936FE300A3829C /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -572,6 +583,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		C15E2FE630937684008765AA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = exactVersion;
+				version = 11.5.0;
+			};
+		};
 		C177EC15305B233900A33DDC /* XCRemoteSwiftPackageReference "SwiftfulRouting" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRouting.git";
@@ -599,6 +618,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C15E2FE730937684008765AA /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C15E2FE630937684008765AA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		C15E2FE930937684008765AA /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C15E2FE630937684008765AA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
 		C177EC16305B233900A33DDC /* SwiftfulRouting */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C177EC15305B233900A33DDC /* XCRemoteSwiftPackageReference "SwiftfulRouting" */;
