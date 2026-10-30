@@ -4,7 +4,7 @@
 //
 //  Created by beri on 29.09.2026.
 //
-
+/*
 import SwiftUI
 
 enum RateOption: String, CaseIterable {
@@ -92,3 +92,4 @@ struct RateButton: View {
         RateButton()
     }
 }
+ */

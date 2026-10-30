@@ -4,7 +4,7 @@
 //
 //  Created by beri on 21.09.2026.
 //
-
+/*
 import SwiftUI
 import SwiftfulUI
 
@@ -225,3 +225,4 @@ struct BumbleCardView: View {
         .padding(.vertical, 40)
         .padding(.horizontal, 16)
 }
+*/

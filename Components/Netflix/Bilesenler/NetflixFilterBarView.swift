@@ -4,7 +4,7 @@
 //
 //  Created by beri on 24.09.2026.
 //
-
+/*
 import SwiftUI
 
 struct FilterModel: Hashable, Equatable {
@@ -95,3 +95,4 @@ fileprivate struct NetflixFilterBarViewPreview: View {
         NetflixFilterBarViewPreview()
     }
 }
+ */

@@ -4,8 +4,7 @@
 //
 //  Created by beri on 24.09.2026.
 //
-
-import SwiftUI
+/*import SwiftUI
 
 struct NetflixCell: View {
     var title: String = "Categories"
@@ -51,3 +50,4 @@ struct NetflixCell: View {
     }
     
 }
+*/

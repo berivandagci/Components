@@ -4,8 +4,7 @@
 //
 //  Created by beri on 29.09.2026.
 //
-
-import SwiftUI
+/*import SwiftUI
 
 struct ShareButton: View {
     
@@ -37,3 +36,4 @@ struct ShareButton: View {
         ShareButton()
     }
 }
+ */

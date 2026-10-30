@@ -4,7 +4,7 @@
 //
 //  Created by beri on 28.09.2026.
 //
-
+/*
 import SwiftUI
 import SwiftfulUI
 
@@ -123,3 +123,4 @@ struct NetflixHeroCell: View {
     NetflixHeroCell()
         .padding(40)
 }
+ */

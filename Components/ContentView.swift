@@ -21,16 +21,22 @@ struct ContentView: View {
                 }
             }
             
+            /*
             Button("Open Bumble") {
                 router.showScreen(.fullScreenCover) { _ in
                     BumbleHomeView()
                 }
             }
+             */
+            
+            // İleride açmak istersen Netflix butonu burada yer alabilir
+            /*
             Button("Open Netflix") {
                 router.showScreen(.fullScreenCover) { _ in
                     NetflixHomeView()
                 }
             }
+            */
         }
     }
 }

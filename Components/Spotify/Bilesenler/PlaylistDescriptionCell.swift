@@ -1,10 +1,3 @@
-//
-//  PlaylistDescriptionCell.swift
-//  Components
-//
-//  Created by beri on 14.09.2026.
-//
-
 import SwiftUI
 
 struct PlaylistDescriptionCell: View {
@@ -26,11 +19,8 @@ struct PlaylistDescriptionCell: View {
             
             madeForYouSection
             
-            
             Text(subheadline)
             buttonsRow
-            
-           
         }
         .font(.callout)
         .fontWeight(.medium)
@@ -48,6 +38,7 @@ struct PlaylistDescriptionCell: View {
                 .foregroundStyle(.spotifyWhite)
         }
     }
+    
     private var buttonsRow: some View {
         HStack(spacing: 0) {
             HStack(spacing: 20) {

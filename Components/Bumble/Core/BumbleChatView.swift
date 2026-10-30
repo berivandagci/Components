@@ -5,6 +5,7 @@
 //  Created by beri on 23.09.2026.
 //
 
+/*
 import SwiftUI
 import SwiftfulRouting
 
@@ -43,9 +44,9 @@ struct BumbleChatsView: View {
                 .onTapGesture {
                     router.dismissScreen()
                 }
-            
+             
             Spacer(minLength: 0)
-            
+             
             Image(systemName: "magnifyingglass")
                 .padding(8)
                 .background(Color.black.opacity(0.001))
@@ -135,7 +136,7 @@ struct BumbleChatsView: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 4)
-                    .contentShape(Rectangle()) 
+                    .contentShape(Rectangle())
                     .onTapGesture {
                         
                     }
@@ -161,3 +162,4 @@ struct BumbleChatsView: View {
         BumbleChatsView()
     }
 }
+*/

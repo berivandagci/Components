@@ -5,6 +5,7 @@
 //  Created by beri on 21.09.2026.
 //
 
+/*
 import SwiftUI
 import SwiftfulUI
 import SwiftfulRouting
@@ -36,7 +37,7 @@ struct BumbleHomeView: View {
                             let isPrevious = (selectedIndex - 1) == index
                             let isCurrent = selectedIndex == index
                             let isNext = (selectedIndex + 1) == index
-                           
+                            
                             if isPrevious || isCurrent || isNext {
                                 cardView(for: user, index: index)
                             }
@@ -150,56 +151,4 @@ struct BumbleHomeView: View {
              
             Spacer()
              
-            Image(systemName: "slider.horizontal.3")
-                .padding(8)
-                .background(Color.black.opacity(0.001))
-                .onTapGesture { }
-                .frame(maxWidth: .infinity, alignment: .trailing)
-        }
-        .font(.title2)
-        .fontWeight(.medium)
-        .foregroundStyle(.bumbleBlack)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
-    }
-      
-    @ViewBuilder
-    private var overlaySwipingIndicator: some View {
-        ZStack {
-            Circle()
-                .fill(currentSwipeoffset < -20 ? Color.red.opacity(0.8) : Color.gray.opacity(0.4))
-                .overlay(
-                    Image(systemName: "xmark")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.white)
-                )
-                .frame(width: 60, height: 60)
-                .scaleEffect(currentSwipeoffset < -50 ? 1.3 : 1.0)
-                .opacity(currentSwipeoffset < 0 ? 1.0 : 0.0)
-                .offset(x: 40)
-                .frame(maxWidth: .infinity, alignment: .leading)
-             
-            Circle()
-                .fill(currentSwipeoffset > 20 ? Color.green.opacity(0.8) : Color.gray.opacity(0.4))
-                .overlay(
-                    Image(systemName: "checkmark")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.white)
-                )
-                .frame(width: 60, height: 60)
-                .scaleEffect(currentSwipeoffset > 50 ? 1.3 : 1.0)
-                .opacity(currentSwipeoffset > 0 ? 1.0 : 0.0)
-                .offset(x: -40)
-                .frame(maxWidth: .infinity, alignment: .trailing)
-        }
-        .padding(.horizontal, 24)
-    }
-}
-
-#Preview {
-    RouterView { _ in
-        BumbleHomeView()
-    }
-}
+ Image(systemName*/

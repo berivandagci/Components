@@ -1,26 +1,44 @@
 import Foundation
 
-struct Song: Codable, Identifiable {
-    let id: String // Firestore için String ID çok daha rahattır
+struct Product: Codable, Identifiable {
+    let id: Int
     let title: String
-    let artist: String
-    let duration: Double
-    let songURL: String // Şarkının çalınacağı ses dosyası veya yayın linki
-    let thumbnail: String // Albüm kapağı görseli
+    let description: String
+    let price: Double
+    let discountPercentage: Double
+    let rating: Double
+    let stock: Int
+    let brand: String?
+    let category: String
+    let thumbnail: String
+    let images: [String]
     
     var firstImage: String {
-        thumbnail.isEmpty ? Constants.randomImage : thumbnail
+        images.first ?? Constants.randomImage
     }
     
-    // Test amaçlı sahte (mock) şarkı verisi
-    static var mock: Song {
-        Song(
-            id: "12345",
-            title: "Örnek Şarkı",
-            artist: "Sanatçı Adı",
-            duration: 180.0,
-            songURL: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-            thumbnail: Constants.randomImage
+    static var mock: Product {
+        Product(
+            id: 1,
+            title: "Örnek Müzik Ürünü",
+            description: "Bu şarkı veya çalma listesi için örnek bir açıklamadır.",
+            price: 9.99,
+            discountPercentage: 0.0,
+            rating: 4.5,
+            stock: 100,
+            brand: "Spotify",
+            category: "Müzik",
+            thumbnail: Constants.randomImage,
+            images: [Constants.randomImage]
         )
     }
+}
+
+struct ProductRow {
+    let title: String
+    let product: [Product]
+}
+
+struct ProductArray: Codable {
+    let products: [Product]
 }

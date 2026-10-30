@@ -3,7 +3,7 @@
 //  Components
 //  Created by beri on 28.09.2026.
 //
-
+/*
 import SwiftUI
 
 struct NetflixMovieCell: View {
@@ -84,3 +84,4 @@ struct NetflixMovieCell: View {
     }
     .preferredColorScheme(.dark)
 }
+ */

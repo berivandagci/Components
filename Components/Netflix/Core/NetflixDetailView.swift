@@ -4,7 +4,7 @@
 //
 //  Created by beri on 29.09.2026.
 //
-
+/*
 import SwiftUI
 import SwiftfulRouting
 
@@ -134,3 +134,4 @@ struct NetflixDetailView: View {
         NetflixDetailView()
     }
 }
+ */

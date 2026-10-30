@@ -4,7 +4,7 @@
 //
 //  Created by beri on 21.09.2026.
 //
-
+/*
 import SwiftUI
 
 struct BumbleHeartView: View {
@@ -27,3 +27,4 @@ struct BumbleHeartView: View {
 #Preview {
     BumbleHeartView()
 }
+ */

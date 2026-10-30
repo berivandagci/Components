@@ -4,7 +4,7 @@
 //
 //  Created by beri on 21.09.2026.
 //
-
+/*
 import SwiftUI
 
 struct BumbleFilterView: View {
@@ -52,3 +52,4 @@ fileprivate struct BumbleFilterViewPreview: View {
 #Preview {
     BumbleFilterViewPreview()
 }
+ */

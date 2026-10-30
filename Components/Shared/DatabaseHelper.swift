@@ -1,21 +1,25 @@
 import Foundation
 import FirebaseFirestore
 
-struct DatabaseHelper {
-    // Firestore'dan şarkı listesini çekme
+actor DatabaseHelper {
+    func getUsers() async throws -> [User] {
+        return [.mock]
+    }
+    
+    func getProducts() async throws -> [Product] {
+        guard let url = URL(string: "https://dummyjson.com/products") else {
+            return []
+        }
+        let (data, _) = try await URLSession.shared.data(from: url)
+        let productList = try JSONDecoder().decode(ProductArray.self, from: data)
+        return productList.products
+    }
+    
     func getSongs() async throws -> [Song] {
         let snapshot = try await Firestore.firestore().collection("songs").getDocuments()
         
         return snapshot.documents.compactMap { document in
-            let data = document.data()
-            let id = document.documentID
-            let title = data["title"] as? String ?? ""
-            let artist = data["artist"] as? String ?? ""
-            let duration = data["duration"] as? Double ?? 0.0
-            let songURL = data["songURL"] as? String ?? ""
-            let thumbnail = data["thumbnail"] as? String ?? ""
-            
-            return Song(id: id, title: title, artist: artist, duration: duration, songURL: songURL, thumbnail: thumbnail)
+            try? document.data(as: Song.self)
         }
     }
 }

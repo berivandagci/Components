@@ -4,7 +4,7 @@
 //
 //  Created by beri on 21.09.2026.
 //
-
+/*
 import SwiftUI
 
 struct InterestPillView: View {
@@ -39,3 +39,4 @@ struct InterestPillView: View {
     }
     .padding()
 }
+ */

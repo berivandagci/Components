@@ -4,7 +4,7 @@
 //
 //  Created by beri on 21.09.2026.
 //
-
+/*
 import SwiftUI
 import SwiftfulUI
 
@@ -30,3 +30,4 @@ struct InterestPillGridView: View {
     InterestPillGridView(interests: User.mock.interests)
         .padding()
 }
+ */

@@ -4,7 +4,7 @@
 //
 //  Created by beri on 29.09.2026.
 //
-
+/*
 import SwiftUI
 import SwiftfulUI
 
@@ -65,3 +65,4 @@ struct NetflixDetailsHeaderView: View {
 #Preview {
     NetflixDetailsHeaderView()
 }
+*/

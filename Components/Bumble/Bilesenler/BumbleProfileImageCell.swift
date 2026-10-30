@@ -4,7 +4,7 @@
 //
 //  Created by beri on 22.09.2026.
 //
-
+/*
 import SwiftUI
 
 struct BumbleProfileImageCell: View {
@@ -57,3 +57,4 @@ struct BumbleProfileImageCell: View {
         BumbleProfileImageCell(hasNewMessage: false)
 
     }}
+ */

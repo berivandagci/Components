@@ -4,7 +4,7 @@
 //
 //  Created by beri on 29.09.2026.
 //
-
+/*
 import SwiftUI
 
 struct MyListButton: View {
@@ -57,3 +57,4 @@ fileprivate struct MyListButtonPreview: View {
         MyListButtonPreview()
     }
 }
+ */
