@@ -47,6 +47,18 @@ struct SpotifyPlayListView: View {
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+        .overlay(alignment: .topLeading) {
+            Image(systemName: "chevron.left")
+                .font(.title3.bold())
+                .foregroundStyle(.spotifyWhite)
+                .padding(12)
+                .background(Color.black.opacity(0.5))
+                .clipShape(Circle())
+                .padding(16)
+                .onTapGesture {
+                    router.dismissScreen()
+                }
+        }
     }
 
     private var headerImage: some View {

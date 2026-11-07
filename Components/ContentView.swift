@@ -16,10 +16,11 @@ struct ContentView: View {
     var body: some View {
         List {
             Button("OPEN Spotify") {
-                router.showScreen(.fullScreenCover) { _ in
-                    SpotifyHomeView(viewModel: SpotifyHomeViewModel(router: router))
+                router.showScreen(.fullScreenCover) { newRouter in
+                    SpotifyHomeView(viewModel: SpotifyHomeViewModel(router: newRouter))
                 }
             }
+            
             Button("Downloads") {
                 router.showScreen(.push) { _ in
                     DownloadsView()
