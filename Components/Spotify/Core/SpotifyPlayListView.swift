@@ -1,11 +1,15 @@
 import SwiftUI
+import SwiftData
 import SwiftfulUI
 import SwiftfulRouting
 
 struct SpotifyPlayListView: View {
-    var product: Product = .mock
+    var song: Song = .mock
+    var songs: [Song] = []
     var user: User = .mock
     @Environment(\.router) var router
+    @Environment(\.modelContext) private var modelContext
+    @Query private var downloads: [DownloadedSong]
     
     var body: some View {
         ZStack {
@@ -16,12 +20,13 @@ struct SpotifyPlayListView: View {
                     headerImage
                     
                     PlaylistDescriptionCell(
-                        descriptionText: product.description,
+                        descriptionText: song.artist ?? "",
                         userName: user.firstName,
-                        subheadline: product.brand ?? "",
+                        subheadline: song.title ?? "",
+                        isDownloaded: isDownloaded,
                         onAddToPlaylistPressed: {},
                         onSharedPressed: {},
-                        onDownLoadPressed: {},
+                        onDownLoadPressed: { downloadSong() },
                         onEllipsisPressed: {},
                         onShufflePressed: {},
                         onPlayPressed: {}
@@ -29,22 +34,12 @@ struct SpotifyPlayListView: View {
                     .padding(16)
                     
                     VStack(spacing: 12) {
-                        ForEach(1..<15, id: \.self) { _ in
-                            HStack(spacing: 12) {
-                                Rectangle()
-                                    .fill(Color.spotifyDarkGray)
-                                    .frame(width: 50, height: 50)
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(product.title)
-                                        .font(.body)
-                                        .bold()
-                                        .foregroundStyle(.spotifyWhite)
-                                    Text(product.brand ?? "Sanatçı")
-                                        .font(.caption)
-                                        .foregroundStyle(.spotifyLightGray)
-                                }
-                                Spacer()
-                            }
+                        ForEach(songs) { item in
+                            SongRowCell(
+                                imageName: item.firstImage,
+                                title: item.title ?? "",
+                                subtitle: item.artist
+                            )
                         }
                     }
                     .padding(.horizontal, 16)
@@ -59,13 +54,34 @@ struct SpotifyPlayListView: View {
             .fill(Color.spotifyDarkGray)
             .aspectRatio(1, contentMode: .fit)
             .overlay(
-                ImageLoaderView(urlString: product.firstImage)
+                ImageLoaderView(urlString: song.firstImage)
             )
+    }
+    
+    private var isDownloaded: Bool {
+        guard let id = song.id else { return false }
+        return downloads.contains(where: { $0.songID == id })
+    }
+    
+    private func downloadSong() {
+        guard let id = song.id else { return }
+        guard !isDownloaded else { return }
+        
+        modelContext.insert(
+            DownloadedSong(
+                songID: id,
+                title: song.title ?? "",
+                artist: song.artist ?? "",
+                thumbnail: song.firstImage,
+                songURL: song.songURL ?? ""
+            )
+        )
     }
 }
 
 #Preview {
     RouterView { router in
-        SpotifyPlayListView(product: .mock, user: .mock)
+        SpotifyPlayListView(song: .mock, songs: [.mock], user: .mock)
     }
+    .modelContainer(for: DownloadedSong.self, inMemory: true)
 }

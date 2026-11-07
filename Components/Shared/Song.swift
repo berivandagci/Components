@@ -1,15 +1,19 @@
 import Foundation
+import FirebaseFirestore // Firestore kütüphanesinin import edildiğinden emin ol
 
 struct Song: Codable, Identifiable {
-    let id: String // Firestore için String ID çok daha rahattır
-    let title: String
-    let artist: String
-    let duration: Double
-    let songURL: String // Şarkının çalınacağı ses dosyası veya yayın linki
-    let thumbnail: String // Albüm kapağı görseli
+    @DocumentID var id: String? // Firebase doküman ID'sini otomatik yakalar
+    let title: String?
+    let artist: String?
+    let duration: Double?
+    let songURL: String?
+    let thumbnail: String?
     
     var firstImage: String {
-        thumbnail.isEmpty ? Constants.randomImage : thumbnail
+        guard let thumbnail, !thumbnail.isEmpty else {
+            return Constants.randomImage
+        }
+        return thumbnail
     }
     
     // Test amaçlı sahte (mock) şarkı verisi
@@ -23,4 +27,8 @@ struct Song: Codable, Identifiable {
             thumbnail: Constants.randomImage
         )
     }
+}
+struct SongRow {
+    let title: String
+    let songs: [Song]
 }

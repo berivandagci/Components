@@ -4,6 +4,7 @@ struct PlaylistDescriptionCell: View {
     var descriptionText: String = Product.mock.description
     var userName: String = "Berivan"
     var subheadline: String = "Some headline goes here"
+    var isDownloaded: Bool = false
     var onAddToPlaylistPressed: (() -> Void)? = nil
     var onSharedPressed: (() -> Void)? = nil
     var onDownLoadPressed: (() -> Void)? = nil
@@ -50,8 +51,9 @@ struct PlaylistDescriptionCell: View {
                         onAddToPlaylistPressed?()
                     }
                 
-                Image(systemName: "arrow.down.circle")
+                Image(systemName: isDownloaded ? "arrow.down.circle.fill" : "arrow.down.circle")
                     .font(.title2)
+                    .foregroundStyle(isDownloaded ? .spotifyGreen : .spotifyLightGray)
                     .padding(8)
                     .background(Color.black.opacity(0.001))
                     .onTapGesture {

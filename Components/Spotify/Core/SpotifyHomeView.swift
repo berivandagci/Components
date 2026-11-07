@@ -14,8 +14,8 @@ final class SpotifyHomeViewModel {
     let router: AnyRouter?
     var currentUser: User? = nil
     var selectedCategory: SpotifyCategory? = nil
-    var products: [Product] = []
-    var productRows: [ProductRow] = []
+    var songs: [Song] = []
+    var songRows: [SongRow] = []
 
     init(router: AnyRouter? = nil) {
         self.router = router
@@ -30,25 +30,25 @@ final class SpotifyHomeViewModel {
         }
         
         do {
-            let allProducts = try await DatabaseHelper().getProducts()
-            products = Array(allProducts.prefix(8))
+            let allSongs = try await DatabaseHelper().getSongs()
+            songs = Array(allSongs.prefix(8))
             
-            var rows: [ProductRow] = []
-            let allBrands = Set(products.map({ $0.brand }))
-            for brand in allBrands {
-                let filteredProducts = products.filter({ $0.brand == brand })
-                rows.append(ProductRow(
-                    title: brand?.capitalized ?? "Diğer",
-                    product: filteredProducts
+            var rows: [SongRow] = []
+            let allArtists = Set(songs.map({ $0.artist }))
+            for artist in allArtists {
+                let filteredSongs = songs.filter({ $0.artist == artist })
+                rows.append(SongRow(
+                    title: artist?.capitalized ?? "Diğer",
+                    songs: filteredSongs
                 ))
             }
-            productRows = rows
+            songRows = rows
         } catch {
             let nsError = error as NSError
             if nsError.domain == NSURLErrorDomain && nsError.code == -999 {
                 return
             }
-            print("Ürünler çekilirken hata oluştu: \(error)")
+            print("Şarkılar çekilirken hata oluştu: \(error)")
         }
     }
 }
@@ -71,8 +71,8 @@ struct SpotifyHomeView: View {
                         VStack(spacing: 24) {
                             recentsSection
                             
-                            if let product = viewModel.products.first {
-                                newReleasedSection(product: product)
+                            if let song = viewModel.songs.first {
+                                newReleasedSection(song: song)
                             }
                             
                             listRows
@@ -133,51 +133,52 @@ struct SpotifyHomeView: View {
     }
     
     private var recentsSection: some View {
-        NonLazyVGrid(columns: 2, alignment: .center, spacing: 10, items: viewModel.products) { product in
-            if let product {
+        NonLazyVGrid(columns: 2, alignment: .center, spacing: 10, items: viewModel.songs) { song in
+            if let song {
                 SpotifyRecentlyCell(
-                    imageName: product.firstImage,
-                    title: product.title
+                    imageName: song.firstImage,
+                    title: song.title ?? ""
                 )
                 .asButton(.press) {
-                    goToPlaylistView(product: product)
+                    goToPlaylistView(song: song)
                 }
             }
         }
     }
     
-    private func goToPlaylistView(product: Product) {
+    private func goToPlaylistView(song: Song) {
         let userToPass = viewModel.currentUser ?? .mock
         let activeRouter = viewModel.router ?? router
+        let allSongs = viewModel.songs
          
         activeRouter.showScreen(.push) { _ in
-            SpotifyPlayListView(product: product, user: userToPass)
+            SpotifyPlayListView(song: song, songs: allSongs, user: userToPass)
         }
     }
     
-    private func newReleasedSection(product: Product) -> some View {
+    private func newReleasedSection(song: Song) -> some View {
         SpotifyReleaseCell(
-            imageName: product.firstImage,
-            headline: product.brand,
-            subheadline: product.category, // .rawValue buradan silindi
-            title: product.title,
-            subtitle: product.description,
+            imageName: song.firstImage,
+            headline: "Yeni çıkan",
+            subheadline: song.artist,
+            title: song.title,
+            subtitle: nil,
             onAddToPlaylistPressed: {
                 
             },
             onPlayPressed: {
-                goToPlaylistView(product: product)
+                goToPlaylistView(song: song)
             }
         )
         .asButton(.press) {
-            goToPlaylistView(product: product)
+            goToPlaylistView(song: song)
         }
     }
     
     private var listRows: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 16) {
-                ForEach(viewModel.productRows, id: \.title) { row in
+                ForEach(viewModel.songRows, id: \.title) { row in
                     VStack(alignment: .leading, spacing: 12) {
                         Text(row.title)
                             .font(.title2)
@@ -185,14 +186,14 @@ struct SpotifyHomeView: View {
                             .foregroundStyle(.spotifyWhite)
                         
                         VStack(spacing: 12) {
-                            ForEach(row.product) { product in
+                            ForEach(row.songs) { song in
                                 ImageTitleRowCell(
                                     imageSize: 120,
-                                    imageName: product.firstImage,
-                                    title: product.title
+                                    imageName: song.firstImage,
+                                    title: song.title ?? ""
                                 )
                                 .asButton(.press) {
-                                    goToPlaylistView(product: product)
+                                    goToPlaylistView(song: song)
                                 }
                             }
                         }

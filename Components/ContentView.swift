@@ -20,6 +20,11 @@ struct ContentView: View {
                     SpotifyHomeView(viewModel: SpotifyHomeViewModel(router: router))
                 }
             }
+            Button("Downloads") {
+                router.showScreen(.push) { _ in
+                    DownloadsView()
+                }
+            }
             
             /*
             Button("Open Bumble") {
@@ -29,7 +34,6 @@ struct ContentView: View {
             }
              */
             
-            // İleride açmak istersen Netflix butonu burada yer alabilir
             /*
             Button("Open Netflix") {
                 router.showScreen(.fullScreenCover) { _ in

@@ -18,8 +18,15 @@ actor DatabaseHelper {
     func getSongs() async throws -> [Song] {
         let snapshot = try await Firestore.firestore().collection("songs").getDocuments()
         
-        return snapshot.documents.compactMap { document in
-            try? document.data(as: Song.self)
+        var songs: [Song] = []
+        for document in snapshot.documents {
+            do {
+                let song = try document.data(as: Song.self)
+                songs.append(song)
+            } catch {
+                print("Şarkı okunamadı (id: \(document.documentID)): \(error)")
+            }
         }
+        return songs
     }
 }

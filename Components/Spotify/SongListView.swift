@@ -14,16 +14,16 @@ struct SongListView: View {
                 } else {
                     List(viewModel.songs) { song in
                         HStack(spacing: 16) {
-                            // Albüm kapağı (Daha önce eklediğimiz ImageLoaderView'ı kullanıyoruz)
-                            ImageLoaderView(urlString: song.thumbnail)
+                            // Albüm kapağı (Güvenli olan firstImage kullanıyoruz)
+                            ImageLoaderView(urlString: song.firstImage)
                                 .frame(width: 50, height: 50)
                                 .cornerRadius(8)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(song.title)
+                                Text(song.title ?? "Bilinmeyen Şarkı")
                                     .font(.headline)
                                     .foregroundColor(.white)
-                                Text(song.artist)
+                                Text(song.artist ?? "Bilinmeyen Sanatçı")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
                             }

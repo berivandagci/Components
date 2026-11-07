@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftfulRouting
 import FirebaseCore
 import FirebaseAuth
+import SwiftData
 
 @main
 struct ComponentsApp: App {
@@ -13,6 +14,7 @@ struct ComponentsApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .modelContainer(for: DownloadedSong.self)
         }
     }
 }
