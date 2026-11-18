@@ -1,7 +1,11 @@
 import SwiftUI
+import SwiftData // <--- SwiftData'yı import etmeyi unutma
 
 struct SongListView: View {
     @StateObject private var viewModel = SongViewModel()
+    
+    // SwiftData veritabanı işlemlerini yapmak için context'i çağırıyoruz
+    @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         NavigationView {
@@ -29,6 +33,23 @@ struct SongListView: View {
                             }
                             
                             Spacer()
+                            
+                            // --- İNDİRME BUTONU ---
+                            Button {
+                                DownloadManager.shared.downloadAndSaveSong(song: song, modelContext: modelContext) { result in
+                                    switch result {
+                                    case .success(let localURL):
+                                        print("Şarkı başarıyla indirildi: \(localURL.path)")
+                                    case .failure(let error):
+                                        print("İndirme hatası: \(error.localizedDescription)")
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: "arrow.down.circle")
+                                    .font(.title2)
+                                    .foregroundColor(.accentColor)
+                            }
+                            .buttonStyle(.borderless) // Listenin tamamının tıklanmasını engellemek için
                         }
                         .listRowBackground(Color.black)
                     }

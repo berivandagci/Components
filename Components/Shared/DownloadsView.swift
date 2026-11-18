@@ -1,43 +1,66 @@
-//
-//  DownloadsView.swift
-//  Components
-//
-//  Created by beri on 7.11.2026.
-//
-
 import SwiftUI
 import SwiftData
 
-struct DownloadsView: View {
-    @Query(sort: \DownloadedSong.downloadedAt, order: .reverse)
-    private var downloads: [DownloadedSong]
+struct DownloadedSongsView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Query(sort: \DownloadedSong.downloadedAt, order: .reverse) private var downloadedSongs: [DownloadedSong]
     
     var body: some View {
-        ZStack {
-            Color.spotifyBlack.ignoresSafeArea()
-            
-            if downloads.isEmpty {
-                Text("Henüz indirilen şarkı yok")
-                    .foregroundStyle(.spotifyLightGray)
-            } else {
-                ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(downloads) { item in
-                            SongRowCell(
-                                imageName: item.thumbnail,
-                                title: item.title,
-                                subtitle: item.artist
-                            )
+        NavigationStack {
+            List {
+                ForEach(downloadedSongs) { song in
+                    HStack(spacing: 12) {
+                        AsyncImage(url: URL(string: song.thumbnail)) { image in
+                            image.resizable().scaledToFill()
+                        } placeholder: {
+                            Color.gray.opacity(0.3)
+                        }
+                        .frame(width: 50, height: 50)
+                        .cornerRadius(6)
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(song.title)
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            Text(song.artist)
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
+                        }
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            playDownloadedSong(song)
+                        }) {
+                            Image(systemName: "play.circle.fill")
+                                .font(.system(size: 32))
+                                .foregroundColor(.green)
                         }
                     }
-                    .padding(16)
+                    .listRowBackground(Color.black)
                 }
+                .onDelete(perform: deleteSongs)
             }
+            .navigationTitle("İndirilenler")
+            .scrollContentBackground(.hidden)
+            .background(Color.black)
         }
     }
-}
-
-#Preview {
-    DownloadsView()
-        .modelContainer(for: DownloadedSong.self, inMemory: true)
+    
+    private func playDownloadedSong(_ song: DownloadedSong) {
+        guard let playbackURL = DownloadManager.shared.getAudioPlaybackURL(for: song) else {
+            print("Oynatılacak geçerli bir URL bulunamadı!")
+            return
+        }
+        print("Oynatıcıya gönderilen URL: \(playbackURL)")
+        // Müzik oynatıcını (AVPlayer vb.) bu playbackURL ile başlat:
+        // AudioPlayerManager.shared.play(url: playbackURL)
+    }
+    
+    private func deleteSongs(at offsets: IndexSet) {
+        for index in offsets {
+            let song = downloadedSongs[index]
+            DownloadManager.shared.deleteDownloadedSong(song, modelContext: modelContext)
+        }
+    }
 }

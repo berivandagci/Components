@@ -16,12 +16,15 @@ final class SpotifyHomeViewModel {
     var selectedCategory: SpotifyCategory? = nil
     var songs: [Song] = []
     var songRows: [SongRow] = []
+    var errorMessage: String? = nil
 
     init(router: AnyRouter? = nil) {
         self.router = router
     }
 
     func getData() async {
+        errorMessage = nil
+
         do {
             currentUser = try await DatabaseHelper().getUsers().first
         } catch {
@@ -43,12 +46,18 @@ final class SpotifyHomeViewModel {
                 ))
             }
             songRows = rows
+            
+            // Hata fırlatılmadı ama liste boşsa da kullanıcıya bilgi ver
+            if songs.isEmpty {
+                errorMessage = "Şarkılar yüklenemedi. İnternet bağlantını kontrol et."
+            }
         } catch {
             let nsError = error as NSError
             if nsError.domain == NSURLErrorDomain && nsError.code == -999 {
                 return
             }
             print("Şarkılar çekilirken hata oluştu: \(error)")
+            errorMessage = "Şarkılar yüklenemedi. İnternet bağlantını kontrol et."
         }
     }
 }
@@ -69,6 +78,15 @@ struct SpotifyHomeView: View {
                 LazyVStack(spacing: 1, pinnedViews: [.sectionHeaders]) {
                     Section {
                         VStack(spacing: 24) {
+                            if let message = viewModel.errorMessage {
+                                Text(message)
+                                    .font(.callout)
+                                    .foregroundStyle(.spotifyLightGray)
+                                    .multilineTextAlignment(.center)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 24)
+                            }
+                            
                             recentsSection
                             
                             if let song = viewModel.songs.first {

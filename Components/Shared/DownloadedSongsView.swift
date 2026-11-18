@@ -1,10 +1,3 @@
-//
-//  DowloadedSong.swift
-//  Components
-//
-//  Created by beri on 7.11.2026.
-//
-
 import Foundation
 import SwiftData
 
