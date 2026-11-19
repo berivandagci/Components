@@ -40,13 +40,7 @@ struct DownloadedSongsView: View {
             List {
                 ForEach(downloadedSongs) { song in
                     HStack(spacing: 12) {
-                        AsyncImage(url: URL(string: song.thumbnail)) { image in
-                            image.resizable().scaledToFill()
-                        } placeholder: {
-                            Color.gray.opacity(0.3)
-                        }
-                        .frame(width: 50, height: 50)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        thumbnailView(for: song.thumbnail)
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text(song.title)
@@ -78,8 +72,35 @@ struct DownloadedSongsView: View {
         }
     }
 
+    @ViewBuilder
+    private func thumbnailView(for rawURL: String) -> some View {
+        if let url = URL(string: rawURL),
+           let scheme = url.scheme?.lowercased(),
+           ["http", "https"].contains(scheme),
+           url.host != nil {
+            AsyncImage(url: url) { image in
+                image.resizable().scaledToFill()
+            } placeholder: {
+                Color.gray.opacity(0.3)
+            }
+            .frame(width: 50, height: 50)
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+        } else {
+            RoundedRectangle(cornerRadius: 6)
+                .fill(Color.gray.opacity(0.3))
+                .frame(width: 50, height: 50)
+                .overlay {
+                    Image(systemName: "music.note")
+                        .foregroundStyle(.white.opacity(0.7))
+                }
+        }
+    }
+
     private func playDownloadedSong(_ song: DownloadedSong) {
-        guard let playbackURL = DownloadManager.shared.getAudioPlaybackURL(for: song) else {
+        guard let playbackURL = DownloadManager.shared.getAudioPlaybackURL(for: song),
+              let scheme = playbackURL.scheme?.lowercased(),
+              (scheme == "file" || (["http", "https"].contains(scheme) && playbackURL.host != nil)) else {
+            print("Geçersiz veya eksik oynatma URL'si: \(song.songURL)")
             return
         }
         AudioPlayerManager.shared.play(url: playbackURL)
