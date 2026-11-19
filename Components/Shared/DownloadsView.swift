@@ -1,10 +1,10 @@
 import SwiftUI
 import SwiftData
 
-struct DownloadedSongsView: View {
+struct DownloadsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \DownloadedSong.downloadedAt, order: .reverse) private var downloadedSongs: [DownloadedSong]
-    
+
     var body: some View {
         NavigationStack {
             List {
@@ -16,26 +16,27 @@ struct DownloadedSongsView: View {
                             Color.gray.opacity(0.3)
                         }
                         .frame(width: 50, height: 50)
-                        .cornerRadius(6)
-                        
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+
                         VStack(alignment: .leading, spacing: 4) {
                             Text(song.title)
                                 .font(.headline)
-                                .foregroundColor(.white)
+                                .foregroundStyle(.white)
                             Text(song.artist)
                                 .font(.subheadline)
-                                .foregroundColor(.gray)
+                                .foregroundStyle(.gray)
                         }
-                        
+
                         Spacer()
-                        
-                        Button(action: {
+
+                        Button {
                             playDownloadedSong(song)
-                        }) {
+                        } label: {
                             Image(systemName: "play.circle.fill")
                                 .font(.system(size: 32))
-                                .foregroundColor(.green)
+                                .foregroundStyle(.green)
                         }
+                        .buttonStyle(.plain)
                     }
                     .listRowBackground(Color.black)
                 }
@@ -46,20 +47,21 @@ struct DownloadedSongsView: View {
             .background(Color.black)
         }
     }
-    
+
     private func playDownloadedSong(_ song: DownloadedSong) {
         guard let playbackURL = DownloadManager.shared.getAudioPlaybackURL(for: song) else {
-            print("Oynatılacak geçerli bir URL bulunamadı!")
             return
         }
-        print("Oynatıcıya gönderilen URL: \(playbackURL)")
-        // Müzik oynatıcını (AVPlayer vb.) bu playbackURL ile başlat:
-        // AudioPlayerManager.shared.play(url: playbackURL)
+        AudioPlayerManager.shared.play(url: playbackURL)
     }
-    
+
     private func deleteSongs(at offsets: IndexSet) {
         for index in offsets {
             let song = downloadedSongs[index]
+            if let playbackURL = DownloadManager.shared.getAudioPlaybackURL(for: song),
+               AudioPlayerManager.shared.currentURL == playbackURL {
+                AudioPlayerManager.shared.stop()
+            }
             DownloadManager.shared.deleteDownloadedSong(song, modelContext: modelContext)
         }
     }
